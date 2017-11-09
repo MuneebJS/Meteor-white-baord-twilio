@@ -1,0 +1,344 @@
+/* CSS declarations go here */
+/* CSS declarations go here */
+/* 
+#canvas {
+  border: 2px solid #000000;
+  height: 1000px;
+  width: 800px;
+  margin: auto;
+
+} */
+
+/* .canvas-wrap {
+  } */
+  
+  #canvas {
+    /* border-right: 3px solid #eeeeee; */
+    /* height: 500px; */
+    /* width: 500px; */
+   
+    /* border: 15px dashed #eeeeee; */
+    /* border: 8px dotted #de2e44
+     */
+     border-radius: 5px;
+     border: 10px solid #ADB2BD;
+     box-shadow: inset -1px 2px 2px #404040, 6px 9px 1px rgba(0, 0, 0, 0.1);
+     overflow: hidden;
+  }
+
+  .users-wrap{
+    /* border: 1px solid #eeeeee; */
+  }
+
+  .canvas-container{
+    width: 100%!important;
+    height: 100%!important;
+    /* margin-left:  115px; */
+    /* margin-bottom: 50px; */
+    /* margin-left: 100px; */
+    /* width: 1100px; */
+    /* height: 500px; */
+
+  }
+  .canvas-container canvas
+  {
+    width:100% !important;
+    height:100%;
+  }
+  
+  .canvas-wrap {
+    height: 500px;
+  }
+
+  .tools-list li  {
+    display: inline;
+  }
+  
+
+
+  h1.users{
+    text-align: center
+  }
+  input#lineWidth {
+    width: 150px;
+  }
+  
+  #draggable { 
+    width: 150px; height: 150px; padding: 0.5em;
+    position: absolute;
+    display: inline-block;
+    bottom: 0px;
+    left: -15px;
+    background: #c9302c;
+    font-weight: 600;
+    color: #ffffff;
+    border: none;
+  }
+  
+  li.class.list-group-item {
+    padding-bottom: 25px;
+    background: #fff;
+  }
+
+
+  .publisher {
+    display: inline-block;
+    width: 200px !important;
+    height: 200px !important;
+  } 
+
+  .subscriber {
+    /* display: inline-block; */
+    /* width: 200px; */
+    /* height: 200px; */
+  }
+
+  .videos {
+    position: absolute;
+    display: inline-block;
+  }
+
+  .tool {
+    color: #000 
+  }
+
+  .red-clr {
+    color: #CC0000
+  }
+  .blue-clr {
+    color: #0033AA;
+  }
+
+  .tools-list {
+    list-style-type: none;
+    display: inline-block;
+    border: 2px solid #adb2bd;
+    border-right: none;
+    padding: 5px;
+    border-radius: 5px;
+    padding-bottom: 20px;
+  }
+
+  .join-card {
+    width: 376px;
+    border-radius: 2.7px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.21);
+    padding: 26px 20px;
+    position: relative;
+    margin: 40px 0 65px 0 !important;
+    margin-bottom: 1rem;
+  }
+
+  .create-btn, .join-btn {
+    width: 100%;
+    padding: 17px 0;
+    border-radius: 4px;
+    font-family: "Source Sans Pro","Helvetica","Arial",sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    color: #fff !important;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.13);
+    display: block;
+    margin-bottom: 18px;
+    
+  }
+  .btn-blue {
+    background-color: #4891e6;
+    box-shadow: 0 1px 0 0 #3f81cc;
+  }
+
+  .btn-green {
+    background-color: #56ca64;
+    box-shadow: 0 1px 0 0 #4bb057;
+  }
+
+  .students-panel-head {
+    background: #49519a !important;
+    color: #fff !important;
+    font-weight: bold;
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .students-panel-body {
+    padding: 0px !important;
+  }
+  /* .student-list {
+    background: #49519a !important;
+    color: #fff;
+    font-weight: bold;
+  } */
+
+  .saveImg {
+    margin-top: 10px;
+  }
+
+  h2 {
+    font: 400 40px/1.5 Helvetica, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+   
+  ul.student-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+   
+  ul.student-list li {
+    font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
+    border-bottom: 1px solid #ccc;
+  }
+   
+  ul.student-list li:last-child {
+    border: none;
+  }
+   
+  ul.student-list li a {
+    text-decoration: none;
+    color: #000;
+    display: block;
+    width: 196px;
+   
+    -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
+    -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
+    -o-transition: font-size 0.3s ease, background-color 0.3s ease;
+    -ms-transition: font-size 0.3s ease, background-color 0.3s ease;
+    transition: font-size 0.3s ease, background-color 0.3s ease;
+  }
+   
+  ul.student-list li a:hover {
+    font-size: 30px;
+    background: #f6f6f6;
+  }
+
+
+
+  .index-cont {
+    background-image: url("/images/homeBg-res2.jpeg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 700px;
+  }
+  .index-cont :before  {
+    opacity: .7;
+  }
+
+  /* classes list style */
+  .classes-list, .inactive-classes-list{
+    /* width:410px; */
+    margin:0 auto;
+    }
+    
+    .classes-list li, .inactive-classes-list li {
+      margin-top: 25px;
+      cursor: pointer;
+    }
+    .classes-list ol, .inactive-classes-list ol{
+    counter-reset: li;
+    list-style: none;
+    *list-style: decimal;
+    font-size: 15px;
+    font-family: 'Raleway', sans-serif;
+    padding: 0;
+    margin-bottom: 4em;
+    }
+    .classes-list a, .inactive-classes-list .class-inst{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    /* *padding: .4em;
+     */
+     padding: 20px 0px 20px 55px;
+     font-size: 20px;
+    margin: .5em 0;
+    background: #494c9d;
+    color: white;
+    text-decoration: none;
+    box-shadow:inset 2em 0 black;
+    -webkit-transition: box-shadow 1s; /* For Safari 3.1 to 6.0 */
+    transition: box-shadow 1s;
+    }
+    
+    .classes-list a:hover{
+    box-shadow:inset 3.5em 0 black;
+    color: #fff;
+    
+    }
+    .inactive-classes-list .class-inst{
+      cursor: default !important;
+      background: #3c763d;
+    }
+    .inactive-classes-list .class-inst:hover {
+      text-decoration-line: none;
+      color: #fff;
+    }
+
+    /* countdown style */
+
+    #clockdiv{
+      font-family: sans-serif;
+      color: #fff;
+      display: inline-block;
+      font-weight: 100;
+      text-align: center;
+      font-size: 30px;
+    }
+    
+    #clockdiv > div{
+      padding: 10px;
+      border-radius: 3px;
+      background: #00BF96;
+      display: inline-block;
+    }
+    
+    #clockdiv div > span{
+      padding: 15px;
+      border-radius: 3px;
+      background: #00816A;
+      display: inline-block;
+    }
+    
+    .smalltext{
+      padding-top: 5px;
+      font-size: 16px;
+    }
+    /* countdown style end*/
+
+    .classes-tabs .active a {
+      background: #494c9d !important;
+      color: #fff !important;
+      font-weight:  bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .classes-tabs li a {
+      text-transform:  uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    .active-classes a {
+      cursor: pointer !important;
+    }
+
+    .inactive-class-opt {
+      margin: 0 20px;
+      color: #fff;
+      text-decoration: none;
+      float: right;
+    }
+
+    .not-avail-class {
+      text-align: center;
+      font-weight: bold;
+      font-size: 15px;
+      color: #baa;
+    }
+
+    
+

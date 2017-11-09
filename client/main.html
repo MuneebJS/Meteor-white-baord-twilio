@@ -1,0 +1,590 @@
+<head>
+  <title>Meteor Whiteboard</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link href="/css/app.css" rel="stylesheet" type="text/css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous">
+  <script src="https://static.opentok.com/v2/js/opentok.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <!-- <script src="lib/easytimer/dist/easytimer.min.js"></script> -->
+
+
+</head>
+
+
+<!-- layouts -->
+
+<template name="twilio_video">
+    <div id="local-media"></div>
+    <div id="remote-media"></div>
+    <!-- <div id="controls">
+      <div id="preview">
+        <p class="instructions">Hello Beautiful</p>
+        <div id="local-media"></div>
+        <button id="button-preview">Preview My Camera</button>
+      </div>
+      <div id="room-controls">
+        <p class="instructions">Room Name:</p>
+        <input id="room-name" type="text" placeholder="Enter a room name" />
+        <button id="button-join">Join Room</button>
+        <button id="button-leave">Leave Room</button>
+      </div>
+      <div id="log"></div>
+    </div> -->
+</template>
+
+<template name="home">
+  {{> header}}
+  <div class="container-fluid index-cont">
+    {{> index}}
+  </div>
+</template>
+
+<template name="classes_layout">
+  {{> header}}
+  <div>
+    {{> classes_tabs}}
+  </div>
+
+  {{> Template.dynamic template = main}}
+</template>
+
+
+
+<template name="student">
+  {{> Template.dynamic template = header}} {{> class_title}}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        {{> archive_added_msg}}
+      </div>
+      <div class="col-xs-12">
+        {{> inactive}}
+      </div>
+      <div class="col-xs-2">
+        {{> students_list}}
+      </div>
+      <div class="col-xs-3">
+        {{> videos}}
+      </div>
+      <div class="col-xs-7">
+        {{> board}}
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="twilio_student">
+  {{> header}} {{> class_title}}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        {{> archive_added_msg}}
+      </div>
+      <div class="col-xs-12">
+        {{> inactive}}
+      </div>
+      <div class="col-xs-2">
+        {{> students_list}}
+      </div>
+      <div class="col-xs-12">
+        {{> twilio_video}}
+      </div>
+      <div class="col-xs-7">
+        {{> board}}
+      </div>
+    </div>
+  </div>
+</template>
+
+
+
+
+<template name="mobile">
+  <!-- <div class="container-fluid"> -->
+  <!-- <div class="row"> -->
+  <!-- <div class="col-xs-12"> -->
+  <div class="dummy" id="downloadImage" style="visibility: hidden;"></div>
+  <!-- <div> -->
+  {{> board}}
+  <!-- </div> -->
+  <!-- </div>
+  </div> -->
+</template>
+
+<template name="videos">
+  <div id="teacher-video" class="teacher-video"></div>
+  <div id="subscriber" class="subscriber"></div>
+  <div id="publisher" class="publisher"></div>
+</template>
+
+<template name="teacher">
+  {{> Template.dynamic template = header}}
+  <div>
+    {{> class_title}}
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        {{> archive_added_msg}}
+      </div>
+      <div class="col-xs-2">
+        {{> students_list}}
+      </div>
+      <div class="col-xs-12">
+        <!-- {{> videos}} -->
+        {{> twilio_video}}
+        <div class="twilio_video"></div>
+       </div>
+      <div class="col-xs-1" style="
+      padding-right: 0px;
+      margin-right: -41px;">
+        {{> Template.dynamic template=boardTools}}
+      </div>
+      <div class="col-xs-7">
+        {{> board}}
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<!-- templates -->
+
+<!-- <template name="exit_class">
+  <button class="exit-class">Exit Class</button>
+</template> -->
+
+<template name="class_title">
+  <h1 id="class_title" style="display: inline-block"></h1>
+</template>
+
+<template name="classes_tabs">
+  <ul class="nav nav-tabs nav-justified classes-tabs">
+    <li class="active-classes active">
+      <a href="javascript:void(0)">Active Classes</a>
+    </li>
+    <li class="inactive-classes">
+      <a href="javascript:void(0)"> Archived Classes</a>
+    </li>
+  </ul>
+</template>
+
+<!-- <template name="countDown">
+  <div id="clockdiv">
+    <div>
+      <span class="minutes" id="min"></span>
+      <div class="smalltext">Minutes</div>
+    </div>
+    <div>
+      <span class="seconds" id="sec"></span>
+      <div class="smalltext">Seconds</div>
+    </div>
+  </div>
+</template> -->
+
+<template name="header">
+  <nav class="navbar navbar-default" style="margin-bottom: 0px;">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="javascript:void(0)" id="home-logo">
+          <img src="/images/logo.jpg" style="margin-top: -16px; height: 50px;" />
+        </a>
+
+      </div>
+      <ul class="nav navbar-nav ">
+        <li style="background: #fff; font-weight: bold; ">
+          <a href="javascript:void(0)" class="home" id="home" style="color: #494C9D">Home</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav" id="class_title_wrap" style="margin-left: 360px; display: none">
+        <li style="background: #494c9d">
+          <a href="javascript:void(0)" style="   
+          color: #fff;
+          font-size: 25px;
+          letter-spacing: 1px;
+          text-transform: uppercase;" id="class_title">
+          </a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li style="background: #fff">
+          <a href="javascript:void(0)" id="class_welcome_msg" style="display:none; font-weight: bold">
+          </a>
+        </li>
+        <li id="countDown" style="background: #fff; display: none">
+          <a href="javascript:void(0)" style="font-weight: bold; color: #cc0000">
+            <span id="min"></span>
+            <span> : </span>
+            <span id="sec"></span>
+          </a>
+        </li>
+        <li style="background: #fff; display: none" id="downloadImage">
+        </li>
+        <li style="background: #fff">
+          <a href="javascript:void(0)" class="exit-class" id="exit_class" style="display:none; font-weight: bold">
+            <i class="fa fa-times-circle" aria-hidden="true"></i>
+            Exit Class
+          </a>
+        </li>
+        <li style="background: #fff; display: none" id="stop_archive">
+          <a href="javascript:void(0)" class="stop-archive" style="font-weight: bold">
+            <i class="fa fa-stop-circle-o" aria-hidden="true"></i>
+            Stop Archive
+          </a>
+        </li>
+        <li style="background: #fff; display: none" id="start_archive">
+          <a href="javascript:void(0)" class="start-archive" style="font-weight: bold">
+            <i class="fa fa-play-circle" aria-hidden="true"></i>
+            Start Archive
+          </a>
+        </li>
+        <li style="background: #fff; display: none" id="view_archive_wrap">
+          <a href="" target="_blank" id="view_archive" class="view-archive" style="font-weight: bold">
+            <i class="fa fa-eye" aria-hidden="true"></i>
+            View Archive
+          </a>
+        </li>
+        <li style="background: #fff; display: none" id="downl_archive_wrap">
+          <a href="" style="font-weight: bold" id="downl_archive" class="downl-archive" download>
+            <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+            Download Archive
+          </a>
+        </li>
+        <li style="background: #fff; display: none" id="">
+          <a href="" style="font-weight: bold" id="get_archive_again" download>
+            <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+            Please click here in few second to get Archive
+          </a>
+        </li>
+        <li style="background: #fff;">
+          <a href="#" style="display: none;font-weight: bold" id="archive_available_txt">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            Your Archive will be available in few seconds
+          </a>
+        </li>
+        <!-- <li style="background: red; display: none" id="archive_available_txt">
+            Your Archives will be available with few seconds
+        </li> -->
+      </ul>
+    </div>
+  </nav>
+</template>
+
+<template name="inactive">
+  <div class="alert alert-danger" id="class_exit_msg" style="display:none">
+    <strong>This class is no more active. Please join us later!</strong>
+  </div>
+</template>
+
+<template name="archive_added_msg">
+  <div class="alert alert-success" id="archive_added_msg" style="display:none">
+    <strong>Now, you can view of download the archive!</strong>
+    <a href="" class="downl-archive" download style="
+    color: #000;
+    font-size: 2em;
+    float: right;
+    margin: -10px 10px;
+    ">
+    <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+    </a>
+    <a href="" class="view-archive" target="_blank" style="
+    color: #000;
+    font-size: 2em;
+    float: right;
+    margin: -10px 10px;
+    ">
+    
+      <i class="fa fa-eye" aria-hidden="true"></i>
+    </a>
+  </div>
+</template>
+
+
+<!-- <template name="welcome">
+ 
+</template> -->
+
+<template name="index">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4 col-xs-12">
+      <div style="    
+      text-align: center;
+      margin-right: 60px;
+      margin-top: 50px">
+        <img src="images/logo.jpg" alt="frwrd">
+      </div>
+      <div class="join-card">
+        <div class="home_btns">
+          <!-- <h1 style="text-align: center">Create OR Join</h1> -->
+          <!-- Signin & Signup -->
+          <a class="create-btn btn-blue" href="#" data-toggle="modal" data-target=".login-register-form">
+            Create
+          </a>
+          <br>
+          <!-- new -->
+          <a href="#" class="btn-green join-btn" data-toggle="modal" data-target=".join-modal">
+            Join
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-12">
+      <div class="modal fade login-register-form" role="dialog">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+              <ul class="nav nav-tabs">
+                <li class="active">
+                  <a data-toggle="tab" href="#login-form"> Create
+                    <span class="glyphicon glyphicon-new-window"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="modal-body">
+              <div class="tab-content">
+                <div id="login-form" class="tab-pane fade in active">
+                  <div class="form-group">
+                    <label for="email">Teacher Name:</label>
+                    <input type="text" required class="form-control" id="name" placeholder="Enter Name" name="teacher_name">
+                  </div>
+                  <div class="form-group">
+                    <label for="class_name">Class Name:</label>
+                    <input type="text" required class="form-control" id="class_name" placeholder="Enter class name" name="class_name">
+                    <label for="class_name">Duration in minutes:</label>
+                    <input type="number" required class="form-control" value="30" id="class_duration" placeholder="Duration of class" name="class_duration">
+                  </div>
+                  <button type="button" class="btn btn-default create" data-dismiss="modal">Create</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- join modal -->
+    <div class="modal fade join-modal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <h3>Student Details</h3>
+          </div>
+          <div class="modal-body">
+            <div class="tab-content">
+              <div id="login-form" class="tab-pane fade in active">
+                <div class="form-group">
+                  <label for="email">Your Name:</label>
+                  <input type="text" class="form-control" required id="student_name" placeholder="Enter Name" name="student_name">
+                </div>
+                <!-- <div class="form-group">
+                          <label for="class_name">Select Class</label>
+                          <input type="text" class="form-control" id="class_name" placeholder="Enter class name" name="class_name">
+                        </div> -->
+                <button type="button" class="btn btn-primary join" id="Join" data-dismiss="modal">Join</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- join modal end -->
+
+  </div>
+</template>
+
+<template name="board">
+  <canvas id="canvas"></canvas>
+</template>
+
+
+<template name="students_list">
+  <div class="panel panel-default">
+    <div class="panel-heading students-panel-head">Students List</div>
+    <div class="panel-body students-panel-body">
+      <ul class="student-list" id="students-list"></ul>
+    </div>
+  </div>
+</template>
+
+
+<template name="boardTools">
+  <div class="board-tools">
+    <input name="whiteboard_id" type="hidden" id="whiteboardId" class="whiteboardId form-control" value="">
+    <input name="class_session_id" type="hidden" id="classSessionId" class="classSessionId form-control" value="">
+    <ul class="tools-list" style="list-style-type: none">
+      <label style="display: none">
+        <input type="checkbox" class="isDrawingMode" checked={{isDrawingMode}}> Drawing enabled?
+      </label>
+      <!-- <li>
+        <input type="color" class="color" value={{color}}>
+      </li> -->
+      <a href="javascript:void(0)" id="black-clr">
+        <li>
+          <i class="fa fa-circle fa-3x tool black-clr" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+
+      <a href="javascript:void(0)" id="blue-clr">
+        <li>
+          <i class="fa fa-circle fa-3x tool blue-clr" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" id="red-clr">
+        <li>
+          <i class="fa fa-circle fa-3x tool red-clr" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" class="draw">
+        <li>
+          <i class="fa fa-pencil fa-3x tool" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" class="erase">
+        <li>
+          <i class="fa fa-eraser fa-3x tool" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" id="add-circle">
+        <li>
+          <i class="fa fa-circle-thin fa-3x tool" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" id="add-square">
+        <li>
+          <i class="fa fa-square-o fa-3x tool" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" id="add-text">
+        <li>
+          <i class="fa fa-font fa-3x tool" aria-hidden="true"></i>
+        </li>
+      </a>
+      <br />
+      <a href="javascript:void(0)" class="clear">
+        <li>
+          <i class="fa fa-trash-o fa-3x tool" aria-hidden="true"></i>
+        </li>
+      </a>
+    </ul>
+  </div>
+</template>
+
+<template name="title">
+  <div class="page-header text-center">
+    <h1 id="test">
+      WHITEBOARD
+    </h1>
+  </div>
+</template>
+
+<template name="saveImage">
+  <div id="downloadImage">
+    <button type="button" class="btn btn-default btn-sm">
+      <span class="glyphicon glyphicon-save"></span> Save
+    </button>
+  </div>
+</template>
+
+
+<template name="publisher">
+  <div id="publisher" class="publisher"></div>
+</template>
+
+<template name="subscriber">
+  <div id="subscriber" class="subscriber"></div>
+</template>
+
+<template name="classes">
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div class="classes-wrap">
+        <h2 class="page-header text-center text-uppercase">active classes</h2>
+        <div class="classes-list">
+          <input type="hidden" value="" id="archive_id_hidden_field">
+          <!-- {{#if classes}} -->
+          <ol class="">
+            {{#each classes}}
+            <li class="class class-join" data-sessionId={{session_id}} data-twilioToken={{teacher_token}} data-sessionType={{session_type}} data-className={{class_name}} data-whiteBoardId={{whiteboard_id}}
+              id={{session_id}}>
+              <a href="javascript:void(0)">
+                <strong> {{teacher_name}}</strong>
+                is conducting
+                <strong>{{class_name}}</strong>
+              </a>
+            </li>
+            {{else}}
+            <div class="not-avail-class">No Active class available</div>
+            {{/each}}
+          </ol>
+
+          <!-- {{#else}} -->
+
+          <!-- {{/if}} -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="inactive_classes">
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div class="classes-wrap">
+        <h2 class="page-header text-center text-uppercase">Inactive Classes</h2>
+        <div class="inactive-classes-list">
+          <ol class="">
+            {{#each classes}}
+            <li class="inactive-class">
+              <a href="javascript:void(0)" class="class-inst">
+                <strong> {{teacher_name}}</strong>
+                <span> was conducting</span>
+                <strong>{{class_name}}</strong>
+
+                {{#if archive_url}}
+                <!-- {{> ringoAnswers}} -->
+                <a href={{archive_url}} target="_blank" class="inactive-class-opt">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </a>
+                <a href={{archive_url}} download class="inactive-class-opt">
+                  <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                </a>
+                {{/if}}
+
+
+                <!-- <a href={{archive_url}} target="_blank" class="inactive-class-opt">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </a>
+                <a href={{archive_url}} download class="inactive-class-opt">
+                  <i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                </a> -->
+              </a>
+            </li>
+            {{else}}
+            <div class="not-avail-class">No Archived Classes available</div>
+            {{/each}}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

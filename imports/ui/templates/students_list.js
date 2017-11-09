@@ -1,0 +1,1 @@
+import './students_list.html'

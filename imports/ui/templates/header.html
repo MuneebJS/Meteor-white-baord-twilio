@@ -1,0 +1,48 @@
+<template name="header">
+    <nav class="navbar navbar-default" style="margin-bottom: 0px;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="javascript:void(0)">
+            <img src="/images/logo.jpg" style="margin-top: -16px; height: 50px;" />
+          </a>
+  
+        </div>
+        <ul class="nav navbar-nav ">
+          <li style="background: #fff; font-weight: bold; ">
+            <a href="javascript:void(0)" class="home" style="color: #494C9D">Home</a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav" id="class_title_wrap" style="margin-left: 360px; display: none">
+          <li style="background: #494c9d">
+            <a href="javascript:void(0)" style="   
+            color: #fff;
+            font-size: 25px;
+            letter-spacing: 1px;
+            text-transform: uppercase;" id="class_title">
+            </a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li style="background: #fff">
+            <a href="javascript:void(0)" id="class_welcome_msg" style="display:none; font-weight: bold">
+            </a>
+          </li>
+          <li id="countDown" style="background: #fff; display: none">
+            <a href="javascript:void(0)" style="font-weight: bold; color: #cc0000">
+              <span id="min"></span>
+              <span> : </span>
+              <span id="sec"></span>
+            </a>
+          </li>
+          <li style="background: #fff; display: none" id="downloadImage">
+          </li>
+          <li style="background: #fff">
+            <a href="javascript:void(0)" class="exit-class" style="display:none; font-weight: bold">
+              <i class="fa fa-times-circle" aria-hidden="true"></i>
+              Exit Class
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </template>
