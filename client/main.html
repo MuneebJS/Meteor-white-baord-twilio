@@ -18,8 +18,9 @@
 <!-- layouts -->
 
 <template name="twilio_video">
-    <div id="local-media"></div>
     <div id="remote-media"></div>
+    <div id="local-media"></div>
+   
     <!-- <div id="controls">
       <div id="preview">
         <p class="instructions">Hello Beautiful</p>
@@ -55,7 +56,7 @@
 
 
 <template name="student">
-  {{> Template.dynamic template = header}} {{> class_title}}
+  {{>  header}} {{> class_title}}
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12">
@@ -64,11 +65,12 @@
       <div class="col-xs-12">
         {{> inactive}}
       </div>
-      <div class="col-xs-2">
+      <div class="col-xs-3">
         {{> students_list}}
       </div>
-      <div class="col-xs-3">
-        {{> videos}}
+      <div class="col-xs-2">
+        <!-- {{> videos}} -->
+        {{> twilio_video}}
       </div>
       <div class="col-xs-7">
         {{> board}}
@@ -137,7 +139,6 @@
       <div class="col-xs-2">
         <!-- {{> videos}} -->
         {{> twilio_video}}
-        <div class="twilio_video"></div>
        </div>
       <div class="col-xs-1" style="
       padding-right: 0px;

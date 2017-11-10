@@ -66,3 +66,9 @@ FlowRouter.route('/twilio_student', {
         BlazeLayout.render('twilio_student');
     }
 });
+
+FlowRouter.route('/student', {
+    action: function () {
+        BlazeLayout.render('student');
+    }
+});
