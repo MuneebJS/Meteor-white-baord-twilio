@@ -603,6 +603,8 @@ Template.board.onRendered(function () {
 });
 
 
+
+
 // functions
 function leaveRoomIfJoined() {
   if (activeRoom) {
@@ -657,157 +659,6 @@ function saveClassDataTwilio(className, teacherName, token) {
       console.log('error calling  create class twilio', error);
     },
   });
-}
-
-function getArchiveIdForStudent() {
-  sessionId = Session.get("sessionId");
-  $.get(`${baseUrl}/get-student-archive/${sessionId}`)
-    .done(function (data) {
-      // console.log("get archive id from student done", data)
-      Session.set("archiveId", data.archive_id);
-
-      if (data.archive_id) {
-        $("#archive_available_txt").show();
-        getArchiveUrl()
-      }
-      else {
-        console.log("getArchiveIdForStudent() else run")
-      }
-    })
-    .fail(function (error) {
-      console.log("get archive error", error)
-    })
-}
-
-function doAfterArchiveUrl(url, archive_id) {
-  // let url = data.url;
-  let mp4Index = url.indexOf('.mp4');
-  let archiveUrl = url.slice(0, mp4Index + 4);
-  // let archiveUrl = data.url;
-  Session.set("archiveUrl", archiveUrl)
-  makeDownlAnchor(archiveUrl)
-  saveArchiveUrl(archiveUrl, archive_id)
-}
-
-
-function saveArchiveUrl(url, archive_id) {
-  // set archive url in db  
-  $.ajax({
-    url: baseUrl + '/save-archive-url',
-    type: "POST",
-    contentType: "application/json", // send as JSON
-    data: JSON.stringify({
-      "archive_url": url,
-      "archive_id": archive_id
-    }),
-    success: function (response) {
-      //called when successful
-      console.log('successfully called save archive id request)', response);
-    },
-    error: function (error) {
-      //called when there is an error
-      console.log('error calling stopArchive()', error);
-    },
-  })
-}
-
-
-
-function getArchiveUrl() {
-  let archive_id = Session.get("archiveId")
-  $.get(`${baseUrl}/get-archive/${archive_id}`)
-    .done(function (data) {
-      console.log("getArchiveUrl data", data)
-      if (data.status == "available") {
-        $("#archive_available_txt").hide();
-        $("#archive_added_msg").show();
-        console.log("getArchiveUrl if run")
-        doAfterArchiveUrl(data.url, archive_id)
-
-      }
-      else {
-        console.log("getArchiveUrl else run")
-        $("#archive_available_txt").show();
-        // $("#get_archive_again").show();
-        setTimeout(getArchiveUrl(), 5000);
-      }
-
-    })
-    .fail(function (error) {
-      console.log("get archive error", error)
-    })
-}
-
-function makeDownlAnchor(url) {
-  $("#downl_archive_wrap").show();
-  $("#view_archive_wrap").show();
-  $("#archive_available_txt").hide();
-  $(".downl-archive").prop("href", url);
-  $(".view-archive").prop("href", url);
-}
-
-
-function stopArchive(archive_id) {
-  console.log("stopArchive() archive id", archive_id)
-  $.ajax({
-    url: baseUrl + '/archive-stop',
-    type: "POST",
-    contentType: "application/json", // send as JSON
-    data: JSON.stringify({ "archive_id": archive_id }),
-    complete: function (response) {
-      console.log('stopArchive() complete', response);
-    },
-    success: function (response) {
-      //called when successful
-      console.log('successfully called stopArchive()', response);
-    },
-    error: function (error) {
-      //called when there is an error
-      console.log('error calling stopArchive()', error);
-    },
-  })
-}
-
-function startArchive(sessionId) {
-  console.log("Start Archive sessionId", sessionId);
-  $.ajax({
-    url: baseUrl + '/archive-start',
-    type: "POST",
-    contentType: "application/json", // send as JSON
-    data: JSON.stringify({ "session_id": sessionId }),
-
-    success: function (response) {
-      //called when successful
-      console.log('successfully called startArchive()', response);
-      archiveId = response.archive_id;
-      Session.set("archiveId", response.archive_id);
-
-      $.ajax({
-        url: baseUrl + '/save-archive',
-        type: "POST",
-        contentType: "application/json", // send as JSON
-        data: JSON.stringify({
-          "session_id": sessionId,
-          "archive_id": response.archive_id
-        }),
-
-        success: function (response) {
-          //called when successful
-          console.log('successfully called save arhive id()', response);
-        },
-
-        error: function (error) {
-          //called when there is an error
-          console.log('error calling save arhive id()', error);
-        },
-      })
-    },
-
-    error: function (error) {
-      //called when there is an error
-      console.log('error calling startArchive()', error);
-    },
-  })
 }
 
 function getClassRooms(stName) {
@@ -896,28 +747,6 @@ function doAfterExit() {
   // $("#archive_available_txt").show();
 }
 
-function exitSessionForTeacher(classSessionId) {
-  var apiKey = '45992982';
-  var session = OT.initSession(apiKey, classSessionId);
-  session.disconnect();
-  $("#countDown").hide();
-  doAfterExit();
-  let archiveId = Session.get("archiveId")
-  if (archiveId) {
-    $("#archive_available_txt").show();
-    getArchiveUrl();
-  }
-
-}
-
-function exitSessionForStudent(classSessionId) {
-  var apiKey = '45992982';
-  var session = OT.initSession(apiKey, classSessionId);
-  session.disconnect();
-  doAfterExit();
-  // let archiveId = Session.get("archiveId")
-  getArchiveIdForStudent();
-}
 
 
 fabric.Canvas.prototype.getObjectById = function (id) {
@@ -942,37 +771,38 @@ function saveImage(canvas) {
 
 // ntcomment
 
-function initializeSessionForStudent(className) {
-  console.log("initializeSessionForStudent run", className)
+// function initializeSessionForStudent(className) {
+//   console.log("initializeSessionForStudent run", className)
 
-  $.getJSON(`http://localhost:3050/?identity=alice&room=${className}`, function (data) {
-    // console.log("initializeSessionForStudent data ", data)
-    Video
-      .connect(data.token, {
-        name: className,
-      })
-      .then(
-      function (room) {
-        const localParticipant = room.localParticipant;
-        console.log("initializeSessionForStudent room", room)
-        localParticipant.tracks.forEach(track => {
-          document.getElementById('remote-media').appendChild(track.attach());
-        });
-        // room.on('participantConnected', participantConnected);
-        room.on('participantConnected', participant => {
-          console.log("participantConnected", participant)
-          participant.tracks.forEach(track => {
-            console.log("participantConnected each track", track)
-            document.getElementById('remote-media').appendChild(track.attach());
-          });
-        });
-      },
-      function (error) {
-        console.error('Failed to connect to the Room', error);
-      });
-  });
+//   $.getJSON(`http://localhost:3050/?identity=alice&room=${className}`, function (data) {
+//     // console.log("initializeSessionForStudent data ", data)
+//     Video
+//       .connect(data.token, {
+//         name: className,
+//       })
+//       .then(
+//       function (room) {
+//         const localParticipant = room.localParticipant;
+//         console.log("initializeSessionForStudent room", room)
+//         localParticipant.tracks.forEach(track => {
+//           document.getElementById('remote-media').appendChild(track.attach());
+//         });
+//         // room.on('participantConnected', participantConnected);
+//         room.on('participantConnected', participant => {
+//           console.log("participantConnected", participant)
+//           participant.tracks.forEach(track => {
+//             console.log("participantConnected each track", track)
+//             document.getElementById('remote-media').appendChild(track.attach());
+//           });
+//         });
+//       },
+//       function (error) {
+//         console.error('Failed to connect to the Room', error);
+//       });
+//   });
 
-}
+// }
+
 
 // chcomment
 function initializeSessionForTeacher(className) {
