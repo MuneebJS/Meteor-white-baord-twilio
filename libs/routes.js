@@ -4,6 +4,12 @@ FlowRouter.route('/', {
     }
 });
 
+// FlowRouter.route('/', {
+//     action: function () {
+//         BlazeLayout.render('twilio_video');
+//     }
+// });
+
 FlowRouter.route('/class/mobile/:class_id', {
     action: function () {
         BlazeLayout.render('mobile', {

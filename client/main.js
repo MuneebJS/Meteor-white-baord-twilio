@@ -30,10 +30,16 @@ let archiveId;
 var activeRoom;
 var previewTracks;
 var identity;
-// var roomName;
+var roomName;
 
 // const baseUrl = 'https://frwrd-whiteboard-server.herokuapp.com/public/api';
 const baseUrl = 'https://a1ca4ffa.ngrok.io/whiteboard-app/frwrd-whiteboard/public/api';
+
+
+// window.addEventListener('beforeunload', leaveRoomIfJoined);
+
+
+
 
 
 // let boardColor;
@@ -75,6 +81,10 @@ Template.classes_tabs.events({
   }
 })
 
+// Template.twilio_video.onRendered(function () {
+//   initializeSessionForTeacher();
+// })
+
 Template.index.events({
   "click .create": function () {
     console.log("create class call");
@@ -83,24 +93,13 @@ Template.index.events({
     let duration = $("input[name=class_duration]").val();
     duration = parseInt(duration)
 
-    // $.ajax({
-    //   url: baseUrl + '/create-class-room',
-    //   method: 'POST',
-    //   data: {
-    //     "class_name": className,
-    //     "teacher_name": teacherName,
-    //     "session_type": "Routed"
-    //   },
-    // })
-    // .then(function (result) {
-    // whiteboard_id = result.whiteboard_id;
-    // Session.set("sessionId", result.session_id);
-    // $(".modal-backdrop.in").css("opacity", )
     setTimeout(function () {
       FlowRouter.go(`/teacher/${className}`)
-
     }, 1000)
-    initializeSessionForTeacher("my_class");
+
+    initializeSessionForTeacher(className);
+
+    saveClassDataTwilio(className, teacherName)
 
     //  TODO: put this code in separate funtion
     var countDown = new Date();
@@ -176,17 +175,16 @@ Template.classes.events({
   // }
   "click .class-join": function (event) {
     let className = this.class_name;
-    let token = this.teacher_token;
+    // let token = this.teacher_token;
     let student_whiteboard_id = this.whiteboard_id;
-    let identity = this.session_type;
-    console.log("identity from class join event", this)
+    // let identity = this.session_type;
+    // console.log("identity from class join event", this)
     whiteboard_id = student_whiteboard_id;
-    Session.set("token", token);
+    // Session.set("token", token);
     Session.set("class_name", className)
-    Session.set("session_type", identity)
-    console.log(this)
+    // Session.set("session_type", identity)
+    // console.log(this)
     FlowRouter.go(`/twilio_student`)
-
   }
 });
 
@@ -463,12 +461,12 @@ Template.twilio_student.onRendered(function () {
   // let className = FlowRouter.getQueryParam("class_name");
   // let token = FlowRouter.getQueryParam("token")
   let className = Session.get("class_name");
-  let token = Session.get("token");
-  let identity = Session.get("session_type")
+  // let token = Session.get("token");
+  // let identity = Session.get("session_type")
   // console.log("identity from onrendered", identity)
-  console.log("twilio_student  ", className, token)
+  // console.log("twilio_student  ", className, token)
   // initializeSessionForStudent(className)
-  initializeSessionForTeacher("my_class")
+  initializeSessionForTeacher(className)
 })
 
 Template.home.onRendered(function () {
@@ -606,6 +604,61 @@ Template.board.onRendered(function () {
 
 
 // functions
+function leaveRoomIfJoined() {
+  if (activeRoom) {
+    activeRoom.disconnect();
+  }
+}
+
+function attachTracks(tracks, container) {
+  tracks.forEach(function (track) {
+    container.appendChild(track.attach());
+  });
+}
+
+// Attach the Participant's Tracks to the DOM.
+function attachParticipantTracks(participant, container) {
+  var tracks = Array.from(participant.tracks.values());
+  attachTracks(tracks, container);
+}
+
+// Detach the Tracks from the DOM.
+function detachTracks(tracks) {
+  tracks.forEach(function (track) {
+    track.detach().forEach(function (detachedElement) {
+      detachedElement.remove();
+    });
+  });
+}
+
+// Detach the Participant's Tracks from the DOM.
+function detachParticipantTracks(participant) {
+  var tracks = Array.from(participant.tracks.values());
+  detachTracks(tracks);
+}
+
+function saveClassDataTwilio(className, teacherName, token) {
+  $.ajax({
+    url: baseUrl + '/create-class-room-twilio',
+    type: "POST",
+    contentType: "application/json", // send as JSON
+    data: JSON.stringify({
+      "class_name": className,
+      "teacher_name": teacherName,  
+    }),
+    success: function (response) {
+      //called when successful
+      console.log('successfully called save create class twilio request)', response);
+      // Session.set("whiteboard_id", response.whiteboard_id);
+      whiteboard_id = response.whiteboard_id;
+    },
+    error: function (error) {
+      //called when there is an error
+      console.log('error calling  create class twilio', error);
+    },
+  });
+}
+
 function getArchiveIdForStudent() {
   sessionId = Session.get("sessionId");
   $.get(`${baseUrl}/get-student-archive/${sessionId}`)
@@ -891,49 +944,9 @@ function saveImage(canvas) {
 
 function initializeSessionForStudent(className) {
   console.log("initializeSessionForStudent run", className)
-  // $.getJSON('https://localhost:3050/token', function (data) {
+
   $.getJSON(`http://localhost:3050/?identity=alice&room=${className}`, function (data) {
-  // console.log("initializeSessionForStudent data ", data)
-  Video
-    .connect(data.token, {
-      name: className,
-    })
-    .then(
-    function (room) {
-      const localParticipant = room.localParticipant;
-      console.log("initializeSessionForStudent room", room)
-      localParticipant.tracks.forEach(track => {
-        document.getElementById('remote-media').appendChild(track.attach());
-      });
-      // room.on('participantConnected', participantConnected);
-      room.on('participantConnected', participant => {
-        console.log("participantConnected", participant)
-        participant.tracks.forEach(track => {
-          console.log("participantConnected each track", track)
-          document.getElementById('remote-media').appendChild(track.attach());
-        });
-      });
-    },
-    function (error) {
-      console.error('Failed to connect to the Room', error);
-    });
-  });
-
-}
-
-
-// chcomment
-
-// Meteor.startup(function () {
-//   initializeSessionForTeacher();
-// })
-
-function initializeSessionForTeacher(className) {
-
-  // $.getJSON('http://localhost:3050/token', function (data) {
-  // $.getJSON(`http://localhost:3050/?identity=alice&room=${className}`, function (data) {
-  $.getJSON(`https://b3193557.ngrok.io/?identity=alice&room=${className}`, function (data) {
-    console.log("data ", data)
+    // console.log("initializeSessionForStudent data ", data)
     Video
       .connect(data.token, {
         name: className,
@@ -941,47 +954,131 @@ function initializeSessionForTeacher(className) {
       .then(
       function (room) {
         const localParticipant = room.localParticipant;
-     
-
-          // room.participants.forEach(participant => {
-          //   console.log('Participant "%s" is connected to the Room', participant);
-          // });
-
-          localParticipant.tracks.forEach(track => {
-            document.getElementById('local-media').appendChild(track.attach());
-          });
+        console.log("initializeSessionForStudent room", room)
+        localParticipant.tracks.forEach(track => {
+          document.getElementById('remote-media').appendChild(track.attach());
+        });
         // room.on('participantConnected', participantConnected);
         room.on('participantConnected', participant => {
           console.log("participantConnected", participant)
           participant.tracks.forEach(track => {
-            document.getElementById('remote-media').appendChild(track.attach());
             console.log("participantConnected each track", track)
+            document.getElementById('remote-media').appendChild(track.attach());
           });
         });
-        // $.ajax({
-        //   url: baseUrl + '/create-class-room-twilio',
-        //   type: "POST",
-        //   contentType: "application/json", // send as JSON
-        //   data: JSON.stringify({
-        //     "class_name": room.name,
-        //     "token": data.token,
-        //   }),
-        //   success: function (response) {
-        //     //called when successful
-        //     console.log('successfully called save create class twilio request)', response);
-        //   },
-        //   error: function (error) {
-        //     //called when there is an error
-        //     console.log('error calling  create class twilio', error);
-        //   },
-        // });
       },
-    
       function (error) {
         console.error('Failed to connect to the Room', error);
-      }
-      );
+      });
   });
+
+}
+
+// chcomment
+function initializeSessionForTeacher(className) {
+  // let roomName = className;
+  $.getJSON(`http://localhost:3050/?room=${className}`, function (data) {
+    // $.getJSON(`https://7909c1a5.ngrok.io/`, function(data) {
+    identity = data.identity;
+    roomName = data.room
+    // document.getElementById('room-controls').style.display = 'block';
+
+    // Bind button to join Room.
+    // document.getElementById('button-join').onclick = function() {
+    // roomName = document.getElementById('room-name').value;
+    if (!roomName) {
+      alert('Please enter a room name.');
+      return;
+    }
+
+    // log("Joining room '" + roomName + "'...");
+    var connectOptions = {
+      name: roomName,
+      // logLevel: 'debug',
+      video: {
+        width: 200,
+        height: 200
+      }
+    };
+
+    if (previewTracks) {
+      connectOptions.tracks = previewTracks;
+    }
+
+    // Join the Room with the token from the server and the
+    // LocalParticipant's Tracks.
+    Video.connect(data.token, connectOptions).then(roomJoined, function (error) {
+      // log('Could not connect to Twilio: ' + error.message);
+    });
+    // };
+
+    // Bind button to leave Room.
+    // document.getElementById('button-leave').onclick = function() {
+    //   // log('Leaving room...');
+    //   activeRoom.disconnect();
+    // };
+  });
+
+  function roomJoined(room) {
+    window.room = activeRoom = room;
+
+    // log("Joined as '" + identity + "'");
+    // document.getElementById('button-join').style.display = 'none';
+    // document.getElementById('button-leave').style.display = 'inline';
+
+    // Attach LocalParticipant's Tracks, if not already attached.
+    var previewContainer = document.getElementById('local-media');
+    if (!previewContainer.querySelector('video')) {
+      attachParticipantTracks(room.localParticipant, previewContainer);
+    }
+
+    // Attach the Tracks of the Room's Participants.
+    room.participants.forEach(function (participant) {
+      // log("Already in Room: '" + participant.identity + "'");
+      var previewContainer = document.getElementById('remote-media');
+      attachParticipantTracks(participant, previewContainer);
+    });
+
+    // When a Participant joins the Room, log the event.
+    room.on('participantConnected', function (participant) {
+      // log("Joining: '" + participant.identity + "'");
+    });
+
+    // When a Participant adds a Track, attach it to the DOM.
+    room.on('trackAdded', function (track, participant) {
+      // log(participant.identity + " added track: " + track.kind);
+      var previewContainer = document.getElementById('remote-media');
+      attachTracks([track], previewContainer);
+    });
+
+    // When a Participant removes a Track, detach it from the DOM.
+    room.on('trackRemoved', function (track, participant) {
+      // log(participant.identity + " removed track: " + track.kind);
+      detachTracks([track]);
+    });
+
+    // When a Participant leaves the Room, detach its Tracks.
+    room.on('participantDisconnected', function (participant) {
+      // log("Participant '" + participant.identity + "' left the room");
+      detachParticipantTracks(participant);
+    });
+
+    // Once the LocalParticipant leaves the room, detach the Tracks
+    // of all Participants, including that of the LocalParticipant.
+    room.on('disconnected', function () {
+      // log('Left');
+      if (previewTracks) {
+        previewTracks.forEach(function (track) {
+          track.stop();
+        });
+      }
+      detachParticipantTracks(room.localParticipant);
+      room.participants.forEach(detachParticipantTracks);
+      activeRoom = null;
+      // document.getElementById('button-join').style.display = 'inline';
+      // document.getElementById('button-leave').style.display = 'none';
+    });
+  }
 }
 
 
